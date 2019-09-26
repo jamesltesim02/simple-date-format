@@ -1,29 +1,36 @@
-function format() {
-    var e=arguments[0],
-        t = arguments.length > 1 && void 0 !== arguments[1] 
-            ? arguments[1] 
-            : "yyyy-MM-dd HH:mm:ss"
-    if (!e)
-        return ""
-    if (!(e instanceof Date) && "number" != typeof e)
-        throw new TypeError("Parameter source:" + e + " is not a Date or Number.")
-    if (!t || "string" != typeof t)
-        throw new Error("Parameter pattern:" + t + " is not a valid date format pattern.")
-    "number" == typeof e && (e = new Date(e))
-    var n = {
-        yy: e.getFullYear() % 100,
-        yyyy: e.getFullYear(),
-        MM: e.getMonth() + 1,
-        dd: e.getDate(),
-        hh: e.getHours() % 12,
-        HH: e.getHours(),
-        mm: e.getMinutes(),
-        ss: e.getSeconds()
+function format(source, pattern = 'yyyy-MM-dd HH:mm:ss') {
+  if (!source) {
+    return '';
+  }
+
+  if (typeof source === 'number') {
+    source = new Date(source);
+  }
+
+  const dateFields = {
+    yy: source.getFullYear() % 100,
+    yyyy: source.getFullYear(),
+    M: source.getMonth() + 1,
+    MM: source.getMonth() + 1,
+    d: source.getDate(),
+    dd: source.getDate(),
+    h: source.getHours() % 12,
+    hh: source.getHours() % 12,
+    H: source.getHours(),
+    HH: source.getHours(),
+    m: source.getMinutes(),
+    mm: source.getMinutes(),
+    s: source.getSeconds(),
+    ss: source.getSeconds(),
+  };
+
+  return pattern.replace(/yyyy|yy|MM|M|dd|d|HH|H|hh|h|mm|m|ss|s/g, (fm) => {
+    const value = dateFields[fm];
+    if (fm.length === 1) {
+      return value;
     }
-    return t.replace(/yyyy|yy|MM|dd|HH|hh|mm|ss/g, function(e) {
-        var t = "0000" + n[e]
-        return t.substr(- e.length)
-    })
+    return `0000${value}`.substr(-fm.length);
+  });
 }
 
 module.exports = format
